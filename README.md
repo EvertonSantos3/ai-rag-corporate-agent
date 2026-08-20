@@ -1,30 +1,39 @@
-# AI RAG Corporate Agent
+# NexusBank — Agente de IA Corporativo (RAG)
 
 Agente de IA corporativo baseado em RAG (Retrieval-Augmented Generation), desenvolvido
-para o desafio **Alura Agentes**. Responde perguntas de colaboradores com base em
-documentos internos de uma fintech, cobrindo 5 domínios: Atendimento, Privacidade,
-Segurança, Tarifas e Transações.
+para o desafio **Alura Agentes**. Responde perguntas de colaboradores da **NexusBank**
+(fintech fictícia) com base em documentos internos, cobrindo 5 domínios: Atendimento,
+Privacidade, Segurança, Tarifas e Transações.
+
+Base de conhecimento: **20 documentos, 125 pontos de conteúdo** (25 por categoria).
 
 ## Arquitetura
 
 ```
 data/
   catalog/documents.json   # metadados dos documentos (id, categoria, owner, versão...)
-  documents/<categoria>/   # arquivos originais (pdf, docx, xlsx, md, csv, json, html...)
+  documents/<categoria>/   # arquivos originais (4 arquivos .md por categoria)
 src/
   catalog/schema.py        # schema Pydantic do catálogo
-  ingestion/loaders.py      # extração de texto por formato
+  ingestion/loaders.py      # extração de texto por formato (pdf, docx, xlsx, pptx, md, csv, json, html)
   ingestion/chunking.py     # limpeza + divisão em chunks
   embeddings/               # interface + implementações (local / OCI)
   llm/                       # interface + implementações (mock / OCI)
   vectorstore/chroma_store.py
   rag/retriever.py          # busca semântica + filtro por metadados
   rag/generator.py          # prompt com citação de fonte + fallback anti-alucinação
-  interface/app.py          # chat web em Streamlit
+  interface/app.py          # chat web em Streamlit (identidade visual NexusBank)
   ingest_run.py             # script de ingestão end-to-end
 ```
 
 Ver `docs/architecture.md` para mais detalhes da modelagem de dados.
+
+## Identidade visual
+
+Tema escuro/neon: fundo azul-marinho quase preto (`#0B0E14`) com acento violeta-elétrico
+(`#7C5CFF`), tipografia Space Grotesk (títulos) + Inter (corpo), e um logo de "nós
+conectados" no cabeçalho — representando a metáfora do agente conectando perguntas aos
+documentos certos (o próprio conceito de "Nexus").
 
 ## Como rodar localmente
 
@@ -32,7 +41,7 @@ Ver `docs/architecture.md` para mais detalhes da modelagem de dados.
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 
-# 1. Indexar os documentos de exemplo
+# 1. Indexar os documentos
 python -m src.ingest_run
 
 # 2. Subir a interface de chat

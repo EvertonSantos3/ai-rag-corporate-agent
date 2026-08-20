@@ -17,7 +17,7 @@ class ResultadoBusca:
 
 
 class Retriever:
-    def __init__(self, vector_store: ChromaVectorStore, limiar_distancia: float = 0.8, top_k: int = 5):
+    def __init__(self, vector_store: ChromaVectorStore, limiar_distancia: float = 0.6, top_k: int = 5):
         self._vector_store = vector_store
         self._limiar_distancia = limiar_distancia
         self._top_k = top_k

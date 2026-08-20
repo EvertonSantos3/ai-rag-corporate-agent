@@ -26,7 +26,7 @@ class ChromaVectorStore:
         Path(persist_dir).mkdir(parents=True, exist_ok=True)
         self._embedding_provider = embedding_provider
         self._client = chromadb.PersistentClient(path=persist_dir)
-        self._collection = self._client.get_or_create_collection(collection_name)
+        self._collection = self._client.get_or_create_collection(collection_name, metadata={"hnsw:space": "cosine"},)
 
     def indexar_chunks(self, chunks: list[Chunk]) -> None:
         if not chunks:

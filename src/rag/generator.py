@@ -19,7 +19,7 @@ MENSAGEM_FALLBACK = (
     "Recomendo entrar em contato com a área responsável para mais detalhes."
 )
 
-PROMPT_TEMPLATE = """Você é um agente de IA corporativo. Responda à pergunta do colaborador
+PROMPT_TEMPLATE = """Você é o agente de IA corporativo da NexusBank. Responda à pergunta do colaborador
 usando SOMENTE as informações do CONTEXTO abaixo. Não use conhecimento externo.
 Se o contexto não for suficiente para responder, diga isso claramente.
 Ao final da resposta, cite as fontes usadas no formato [documento - categoria].
