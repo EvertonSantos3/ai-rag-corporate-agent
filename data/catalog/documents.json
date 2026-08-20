@@ -1,0 +1,54 @@
+{
+  "documents": [
+    {
+      "id": "DOC-001",
+      "name": "FAQ de Atendimento",
+      "category": "atendimento",
+      "owner": "Atendimento",
+      "version": "1.0",
+      "status": "active",
+      "source": "manual_upload",
+      "path": "data/documents/atendimento/faq-atendimento.md"
+    },
+    {
+      "id": "DOC-002",
+      "name": "Política de Privacidade",
+      "category": "privacidade",
+      "owner": "Jurídico",
+      "version": "1.0",
+      "status": "active",
+      "source": "manual_upload",
+      "path": "data/documents/privacidade/politica-privacidade.md"
+    },
+    {
+      "id": "DOC-003",
+      "name": "Política de Segurança",
+      "category": "seguranca",
+      "owner": "Segurança da Informação",
+      "version": "1.0",
+      "status": "active",
+      "source": "manual_upload",
+      "path": "data/documents/seguranca/politica-seguranca.md"
+    },
+    {
+      "id": "DOC-004",
+      "name": "Tabela de Tarifas",
+      "category": "tarifas",
+      "owner": "Financeiro",
+      "version": "1.0",
+      "status": "active",
+      "source": "manual_upload",
+      "path": "data/documents/tarifas/tabela-tarifas.md"
+    },
+    {
+      "id": "DOC-005",
+      "name": "Política de Transações Pix",
+      "category": "transacoes",
+      "owner": "Operações",
+      "version": "1.0",
+      "status": "active",
+      "source": "manual_upload",
+      "path": "data/documents/transacoes/politica-pix.md"
+    }
+  ]
+}
