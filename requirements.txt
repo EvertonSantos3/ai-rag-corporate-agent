@@ -1,0 +1,26 @@
+# Core
+pydantic>=2.0
+python-dotenv
+
+# Ingestão de documentos
+pypdf
+python-docx
+openpyxl
+python-pptx
+beautifulsoup4
+
+# Embeddings locais (desenvolvimento/teste sem OCI)
+sentence-transformers
+
+# Vector store local
+chromadb
+
+# Interface
+streamlit
+
+# OCI (ativar quando a conta estiver pronta)
+langchain-oci
+oci
+
+# Testes
+pytest
