@@ -22,10 +22,17 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 import streamlit as st
+from dotenv import load_dotenv
+
+# Carrega variáveis de .env para o ambiente (só tem efeito localmente — no
+# Streamlit Community Cloud não existe .env, as variáveis vêm de st.secrets).
+load_dotenv()
 
 from src.catalog.schema import Catalogo
 from src.embeddings.local_provider import LocalEmbeddingProvider
-from src.llm.mock_provider import MockLLMProvider
+from src.ingest_run import ingerir_catalogo
+from src.llm.groq_provider import GroqLLMProvider
+from src.observability.logger import registrar_execucao
 from src.rag.generator import ResponseGenerator
 from src.rag.retriever import Retriever
 from src.vectorstore.chroma_store import ChromaVectorStore
@@ -87,11 +94,29 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
     border-radius: 12px;
 }
 
+/* Barra de entrada inteira (o Streamlit usa um container fixo na base da tela
+   com fundo claro por padrão — sem isso, só o textarea ficava escuro e o
+   resto da barra continuava branco, quebrando o contraste) */
+[data-testid="stBottomBlockContainer"],
+[data-testid="stChatInputContainer"],
+.stChatFloatingInputContainer {
+    background: var(--bg) !important;
+}
+
 /* Caixa de entrada */
+[data-testid="stChatInput"] {
+    background: var(--surface) !important;
+    border-radius: 12px;
+}
 [data-testid="stChatInput"] textarea {
     background: var(--surface) !important;
     border: 1px solid var(--border) !important;
     color: var(--text) !important;
+    caret-color: var(--accent);
+}
+[data-testid="stChatInput"] textarea::placeholder {
+    color: var(--text-dim) !important;
+    opacity: 1 !important;
 }
 [data-testid="stChatInput"]:focus-within {
     box-shadow: 0 0 0 2px var(--accent-glow);
@@ -119,6 +144,15 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 
 /* Selectbox de categoria */
 [data-testid="stSelectbox"] { color: var(--text); }
+[data-testid="stSelectbox"] label { color: var(--text) !important; }
+[data-testid="stSelectbox"] div[data-baseweb="select"] > div {
+    background: var(--surface) !important;
+    border-color: var(--border) !important;
+    color: var(--text) !important;
+}
+
+/* Texto solto do Streamlit (labels, markdown simples) */
+.stMarkdown, .stMarkdown p, label { color: var(--text) !important; }
 
 /* Foco visível para acessibilidade (não removido) */
 *:focus-visible { outline: 2px solid var(--accent) !important; outline-offset: 2px; }
@@ -152,12 +186,15 @@ st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
 
 @st.cache_resource
 def montar_pipeline():
-    # Troque LocalEmbeddingProvider -> OCIEmbeddingProvider e
-    # MockLLMProvider -> OCILLMProvider quando a conta OCI estiver pronta.
     embedding_provider = LocalEmbeddingProvider()
     vector_store = ChromaVectorStore(embedding_provider=embedding_provider)
+    if vector_store.count() == 0:
+        # Primeira execução (ou container reiniciado sem disco persistente,
+        # como no Streamlit Community Cloud): indexa automaticamente.
+        with st.spinner("Preparando a base de conhecimento pela primeira vez..."):
+            ingerir_catalogo(vector_store, verbose=False)
     retriever = Retriever(vector_store)
-    generator = ResponseGenerator(llm_provider=MockLLMProvider())
+    generator = ResponseGenerator(llm_provider=GroqLLMProvider())
     return retriever, generator
 
 
@@ -182,7 +219,11 @@ categoria_filtro = st.selectbox("Filtrar por categoria (opcional)", ["Todas"] + 
 if "historico" not in st.session_state:
     st.session_state.historico = []
 
-retriever, generator = montar_pipeline()
+try:
+    retriever, generator = montar_pipeline()
+except ValueError as e:
+    st.error(f"⚠️ {e}")
+    st.stop()
 
 for i, item in enumerate(st.session_state.historico):
     with st.chat_message("user"):
@@ -202,5 +243,20 @@ if pergunta:
     categoria = None if categoria_filtro == "Todas" else categoria_filtro
     resultado_busca = retriever.buscar(pergunta, categoria=categoria)
     resposta = generator.gerar(pergunta, resultado_busca)
+    registrar_execucao(pergunta, resposta.texto, resposta.fontes, resposta.teve_fallback)
     st.session_state.historico.append({"pergunta": pergunta, "resposta": resposta})
     st.rerun()
+
+with st.sidebar:
+    st.markdown("#### 📋 Log de execuções")
+    st.caption("Registro de auditoria (etapa 8 do desafio)")
+    from src.observability.logger import LOG_PATH
+
+    if LOG_PATH.exists():
+        linhas = LOG_PATH.read_text(encoding="utf-8").strip().splitlines()
+        st.write(f"{len(linhas)} execuções registradas")
+        with st.expander("Ver últimas 10"):
+            for linha in linhas[-10:]:
+                st.json(json.loads(linha), expanded=False)
+    else:
+        st.caption("Nenhuma execução registrada ainda.")

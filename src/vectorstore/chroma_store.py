@@ -26,7 +26,10 @@ class ChromaVectorStore:
         Path(persist_dir).mkdir(parents=True, exist_ok=True)
         self._embedding_provider = embedding_provider
         self._client = chromadb.PersistentClient(path=persist_dir)
-        self._collection = self._client.get_or_create_collection(collection_name, metadata={"hnsw:space": "cosine"},)
+        self._collection = self._client.get_or_create_collection(
+            collection_name,
+            metadata={"hnsw:space": "cosine"},  # sem isso, o Chroma usa L2 ao quadrado por padrão
+        )
 
     def indexar_chunks(self, chunks: list[Chunk]) -> None:
         if not chunks:
@@ -36,6 +39,9 @@ class ChromaVectorStore:
         ids = [f"{c.documento_id}::{c.indice}" for c in chunks]
         metadatas = [{**c.metadata, "documento_id": c.documento_id, "chunk_indice": c.indice} for c in chunks]
         self._collection.upsert(ids=ids, embeddings=vetores, documents=textos, metadatas=metadatas)
+
+    def count(self) -> int:
+        return self._collection.count()
 
     def buscar(self, pergunta: str, top_k: int = 5, filtro_categoria: str | None = None) -> list[dict]:
         vetor_pergunta = self._embedding_provider.embed_texto(pergunta)

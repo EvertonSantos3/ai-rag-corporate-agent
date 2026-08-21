@@ -9,7 +9,7 @@ openpyxl
 python-pptx
 beautifulsoup4
 
-# Embeddings locais (desenvolvimento/teste sem OCI)
+# Embeddings locais (não dependem de nenhuma nuvem)
 sentence-transformers
 
 # Vector store local
@@ -18,9 +18,8 @@ chromadb
 # Interface
 streamlit
 
-# OCI (ativar quando a conta estiver pronta)
-langchain-oci
-oci
+# LLM de geração (Groq: gratuito, sem cartão de crédito)
+groq
 
 # Testes
 pytest
