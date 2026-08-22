@@ -232,8 +232,17 @@ for i, item in enumerate(st.session_state.historico):
         st.write(item["resposta"].texto)
         if item["resposta"].fontes:
             with st.expander("📎 Fontes"):
+                fontes_unicas = []
+                vistas = set()
+
                 for f in item["resposta"].fontes:
-                    st.write(f"- {f['documento']} ({f['categoria']})")
+                    chave = (f["documento"], f["categoria"])
+                    if chave not in vistas:
+                        vistas.add(chave)
+                        fontes_unicas.append(f)
+
+                for idx, f in enumerate(fontes_unicas, start=1):
+                    st.write(f"{idx}. {f['documento']} ({f['categoria']})")
         col1, col2 = st.columns(2)
         col1.button("👍", key=f"up_{i}")
         col2.button("👎", key=f"down_{i}")

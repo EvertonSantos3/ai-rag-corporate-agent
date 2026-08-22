@@ -17,16 +17,36 @@ class ResultadoBusca:
 
 
 class Retriever:
-    def __init__(self, vector_store: ChromaVectorStore, limiar_distancia: float = 0.6, top_k: int = 5):
+    def __init__(
+        self,
+        vector_store: ChromaVectorStore,
+        limiar_distancia: float = 0.8,
+        top_k: int = 5,
+    ):
         self._vector_store = vector_store
         self._limiar_distancia = limiar_distancia
         self._top_k = top_k
 
-    def buscar(self, pergunta: str, categoria: str | None = None) -> ResultadoBusca:
-        candidatos = self._vector_store.buscar(pergunta, top_k=self._top_k, filtro_categoria=categoria)
-        # distância menor = mais similar; filtra o que estiver muito longe semanticamente
-        relevantes = [c for c in candidatos if c["distancia"] <= self._limiar_distancia]
+    def buscar(
+        self,
+        pergunta: str,
+        categoria: str | None = None,
+    ) -> ResultadoBusca:
+        candidatos = self._vector_store.buscar(
+            pergunta,
+            top_k=self._top_k,
+            filtro_categoria=categoria,
+        )
+
+        # Distância menor = maior similaridade.
+        # Apenas resultados dentro do limiar são considerados relevantes.
+        relevantes = [
+            c
+            for c in candidatos
+            if c["distancia"] <= self._limiar_distancia
+        ]
+
         return ResultadoBusca(
-            trechos=relevantes or candidatos,
+            trechos=relevantes,
             tem_contexto_suficiente=bool(relevantes),
         )
