@@ -5,7 +5,7 @@ para o desafio **Alura Agentes**. Responde perguntas de colaboradores da **Nexus
 (fintech fictícia) com base em documentos internos, cobrindo 5 domínios: Atendimento,
 Privacidade, Segurança, Tarifas e Transações.
 
-🔗 **App em produção:** `<cole aqui o link do Streamlit Community Cloud após o deploy>`
+🔗 **App em produção:** https://ai-rag-corporate-agent-52biqfryljuhd4eccnq7kt.streamlit.app/
 
 Base de conhecimento: **20 documentos, 125 pontos de conteúdo** (25 por categoria).
 
@@ -75,6 +75,11 @@ streamlit run src/interface/app.py
 > este desafio isso não é um problema — a auto-indexação garante que o app volte a
 > funcionar sozinho a cada reinício.
 
+## Evidência de execução em nuvem
+
+Vídeo demonstrando o agente respondendo perguntas em produção (Streamlit Community
+Cloud) está disponível em [`evidencias/`](./evidencias).
+
 ## Registro de execução (auditoria)
 
 Toda pergunta feita ao agente é registrada em `logs/execucoes.jsonl` (formato JSON
@@ -90,9 +95,9 @@ log também pode ser consultado direto na barra lateral do app.
 - [x] Geração com citação de fonte obrigatória + fallback anti-alucinação
 - [x] Interface simples, identifica-se como IA, exibe fontes, botão de feedback
 - [x] Registro de execução (log JSON Lines com timestamp)
-- [ ] Deploy em nuvem com evidência (imagem/vídeo) — **próximo passo**
-- [ ] Repositório público no GitHub — confirmar visibilidade
+- [x] Deploy em nuvem com evidência (imagem/vídeo) — app publicado + vídeo em `evidencias/`
+- [ ] Repositório público no GitHub — **confirmar antes de entregar**
 
 ## Status
 
-✅ Pronto para deploy — challenge Alura Agentes.
+🚀 App publicado e funcionando — challenge Alura Agentes.
