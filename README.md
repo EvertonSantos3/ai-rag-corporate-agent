@@ -96,7 +96,6 @@ log também pode ser consultado direto na barra lateral do app.
 - [x] Interface simples, identifica-se como IA, exibe fontes, botão de feedback
 - [x] Registro de execução (log JSON Lines com timestamp)
 - [x] Deploy em nuvem com evidência (imagem/vídeo) — app publicado + vídeo em `evidencias/`
-- [ ] Repositório público no GitHub — **confirmar antes de entregar**
 
 ## Status
 
